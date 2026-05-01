@@ -1,10 +1,14 @@
 from rest_framework import viewsets
-from .models import Hospital, Doctor, Patient, Appointment, Bloodbank
+from .models import Hospital, Doctor, Patient, Appointment, Bloodbank, Department
 from .serializer import *
 
 class HospitalViewSet(viewsets.ModelViewSet):
     queryset = Hospital.objects.all()
     serializer_class = HospitalSerializer
+
+class DepartmentViewSet(viewsets.ModelViewSet):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
 
 class DoctorViewSet(viewsets.ModelViewSet):
     queryset = Doctor.objects.all()

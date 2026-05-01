@@ -5,6 +5,7 @@ from .views import home
 
 router = DefaultRouter()
 router.register(r'hospitals', HospitalViewSet)
+router.register(r'departments', DepartmentViewSet)
 router.register(r'doctors', DoctorViewSet)
 router.register(r'patients', PatientViewSet)
 router.register(r'appointments', AppointmentViewSet)
@@ -12,4 +13,3 @@ router.register(r'blood', BloodbankViewSet)
 urlpatterns = [
     path('', home),  
 ] + router.urls
-

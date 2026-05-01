@@ -1,0 +1,111 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './pages.css';
+
+const Home = () => {
+  const [stats, setStats] = useState({ hospitals: 0, bloodUnits: 0, bloodTypes: 0 });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [hRes, bRes] = await Promise.all([
+          fetch('http://127.0.0.1:8000/api/hospitals/'),
+          fetch('http://127.0.0.1:8000/api/blood/')
+        ]);
+
+        if (!hRes.ok || !bRes.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const hospitals = await hRes.json();
+        const blood = await bRes.json();
+
+        const totalUnits = blood.reduce((sum, item) => sum + item.units_available, 0);
+        const uniqueTypes = new Set(blood.map(item => item.blood_type)).size;
+
+        setStats({
+          hospitals: hospitals.length,
+          bloodUnits: totalUnits,
+          bloodTypes: uniqueTypes
+        });
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  if (loading) return <div className="loading-state">Loading dashboard...</div>;
+  if (error) return <div className="error-state">Error: {error}</div>;
+
+  return (
+    <div className="home-container">
+      <div className="home-header">
+        <h1 className="home-title">Medicore <span>Central</span></h1>
+        <p className="home-subtitle">Select a module to manage your healthcare infrastructure</p>
+      </div>
+
+      <div className="home-columns-layout">
+        {/* COLUMN 1: HOSPITALS */}
+        <div className="home-col">
+          <div className="box-card">
+            <div className="box-icon blue-gradient">🏥</div>
+            <h2>Hospital Network</h2>
+            <p className="box-desc">Manage doctors, appointments, and patient flow across all affiliated facilities.</p>
+            
+            <div className="box-metrics">
+              <div className="box-metric">
+                <span className="b-value">{stats.hospitals}</span>
+                <span className="b-label">Hospitals</span>
+              </div>
+            </div>
+
+            <button 
+              className="attractive-btn blue-btn"
+              onClick={() => navigate('/hospitals')}
+            >
+              Access Hospitals Overview
+            </button>
+          </div>
+        </div>
+
+        {/* COLUMN 2: BLOOD BANK */}
+        <div className="home-col">
+          <div className="box-card">
+            <div className="box-icon red-gradient">🩸</div>
+            <h2>Blood Directory</h2>
+            <p className="box-desc">Real-time inventory of blood types and unit availability across the network.</p>
+            
+            <div className="box-metrics">
+              <div className="box-metric">
+                <span className="b-value">{stats.bloodUnits}</span>
+                <span className="b-label">Total Units</span>
+              </div>
+              <div className="box-metric">
+                <span className="b-value">{stats.bloodTypes}</span>
+                <span className="b-label">Blood Types</span>
+              </div>
+            </div>
+
+            <button 
+              className="attractive-btn red-btn"
+              onClick={() => navigate('/bloodbank')}
+            >
+              Access Blood Directory
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default Home;
+
