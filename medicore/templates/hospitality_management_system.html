@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MediCore — Hospitality Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --red: #C8102E;
+    --red-dark: #8B0A20;
+    --red-light: #FF2D55;
+    --cream: #FAF7F2;
+    --white: #FFFFFF;
+    --charcoal: #1A1A2E;
+    --slate: #2D2D44;
+    --muted: #6B7280;
+    --border: rgba(200,16,46,0.15);
+    --card-bg: rgba(255,255,255,0.85);
+    --shadow: 0 8px 32px rgba(26,26,46,0.1);
+    --shadow-hover: 0 20px 60px rgba(200,16,46,0.2);
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--cream); }
+  ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2.5rem;
+    height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .nav-logo-icon {
+    width: 36px; height: 36px;
+    background: var(--red);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-logo-icon svg { width: 20px; height: 20px; fill: white; }
+  .nav-logo-text {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--charcoal);
+    letter-spacing: -0.02em;
+  }
+  .nav-logo-text span { color: var(--red); }
+
+  .nav-links {
+    display: flex; gap: 0; list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--red);
+    background: rgba(200,16,46,0.08);
+  }
+
+  .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
+  .btn-ghost {
+    background: none; border: 1.5px solid var(--border);
+    color: var(--charcoal); font-family: var(--font-body);
+    font-size: 0.85rem; font-weight: 500;
+    padding: 0.5rem 1.25rem; border-radius: 8px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--red); color: var(--red); }
+  .btn-primary {
+    background: var(--red); border: none;
+    color: white; font-family: var(--font-body);
+    font-size: 0.85rem; font-weight: 600;
+    padding: 0.5rem 1.25rem; border-radius: 8px; cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(200,16,46,0.3);
+  }
+  .btn-primary:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200,16,46,0.4); }
+
+  /* PAGE SECTIONS */
+  .page { display: none; padding-top: 68px; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    min-height: calc(100vh - 68px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    padding: 5rem 3rem 5rem 4rem;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(200,16,46,0.08);
+    border: 1px solid rgba(200,16,46,0.2);
+    border-radius: 20px;
+    padding: 0.35rem 1rem;
+    font-size: 0.75rem; font-weight: 600;
+    color: var(--red); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1.75rem;
+    width: fit-content;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 4rem; line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    color: var(--charcoal);
+  }
+  .hero h1 em {
+    font-style: italic; color: var(--red);
+  }
+  .hero-sub {
+    font-size: 1.05rem; line-height: 1.7;
+    color: var(--muted); font-weight: 400;
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-lg {
+    padding: 0.85rem 2rem; border-radius: 10px;
+    font-size: 0.95rem; font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer; transition: all 0.2s; border: none;
+  }
+  .btn-lg.primary {
+    background: var(--red); color: white;
+    box-shadow: 0 4px 20px rgba(200,16,46,0.35);
+  }
+  .btn-lg.primary:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(200,16,46,0.4); }
+  .btn-lg.outline {
+    background: transparent; color: var(--charcoal);
+    border: 1.5px solid rgba(26,26,46,0.2) !important;
+  }
+  .btn-lg.outline:hover { border-color: var(--red) !important; color: var(--red); }
+
+  .hero-stats {
+    display: flex; gap: 2rem; margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .stat-item { display: flex; flex-direction: column; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 1.75rem; font-weight: 700;
+    color: var(--charcoal); line-height: 1;
+  }
+  .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+  .hero-right {
+    background: var(--charcoal);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-right::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(200,16,46,0.35) 0%, transparent 65%),
+                radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.2) 0%, transparent 50%);
+  }
+  .hero-card-stack {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; gap: 1rem;
+    padding: 3rem;
+  }
+  .info-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    backdrop-filter: blur(10px);
+    animation: float-card 4s ease-in-out infinite;
+  }
+  .info-card:nth-child(2) { animation-delay: -1.3s; margin-left: 2rem; }
+  .info-card:nth-child(3) { animation-delay: -2.6s; }
+  @keyframes float-card {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .info-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+  .info-card-title { font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; }
+  .info-card-badge {
+    font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+  }
+  .badge-green { background: rgba(34,197,94,0.2); color: #4ade80; }
+  .badge-red { background: rgba(200,16,46,0.3); color: #f87171; }
+  .badge-amber { background: rgba(251,191,36,0.2); color: #fbbf24; }
+  .info-card-value {
+    font-size: 1.5rem; font-weight: 700; color: white;
+    font-family: var(--font-display);
+  }
+  .info-card-sub { font-size: 0.8rem; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .info-card-bar {
+    height: 4px; background: rgba(255,255,255,0.1);
+    border-radius: 2px; margin-top: 0.75rem; overflow: hidden;
+  }
+  .info-card-fill { height: 100%; border-radius: 2px; }
+
+  /* SECTIONS */
+  .section-header {
+    text-align: center;
+    padding: 4rem 2rem 2rem;
+  }
+  .section-eyebrow {
+    font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--red); margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem; font-weight: 800;
+    color: var(--charcoal); line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .section-sub {
+    font-size: 1rem; color: var(--muted);
+    max-width: 520px; margin: 0.75rem auto 0;
+    line-height: 1.7;
+  }
+
+  /* HOSPITALS PAGE */
+  .search-bar-wrap {
+    padding: 2rem 4rem;
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+  }
+  .search-input-wrap {
+    flex: 1; min-width: 280px;
+    position: relative;
+  }
+  .search-input-wrap svg {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    width: 18px; height: 18px; fill: var(--muted);
+  }
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px; background: white;
+    font-family: var(--font-body); font-size: 0.9rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--red); }
+  .filter-select {
+    padding: 0.75rem 1.25rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px; background: white;
+    font-family: var(--font-body); font-size: 0.875rem;
+    outline: none; cursor: pointer; color: var(--charcoal);
+  }
+  .filter-select:focus { border-color: var(--red); }
+
+  .hospitals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+    padding: 0 4rem 4rem;
+  }
+  .hospital-card {
+    background: white;
+    border: 1px solid rgba(26,26,46,0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+  }
+  .hospital-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--red);
+  }
+  .hospital-card-img {
+    height: 120px;
+    background: linear-gradient(135deg, var(--charcoal) 0%, var(--slate) 100%);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hospital-card-img::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(200,16,46,0.4) 0%, transparent 70%);
+  }
+  .hospital-card-img svg {
+    width: 48px; height: 48px; fill: rgba(255,255,255,0.15);
+    position: relative; z-index: 1;
+  }
+  .hospital-card-rating {
+    position: absolute; top: 12px; right: 12px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white; font-size: 0.75rem; font-weight: 600;
+    padding: 0.25rem 0.6rem; border-radius: 20px;
+    backdrop-filter: blur(8px);
+  }
+  .hospital-card-body { padding: 1.5rem; }
+  .hospital-card-name {
+    font-family: var(--font-display);
+    font-size: 1.15rem; font-weight: 700;
+    color: var(--charcoal); margin-bottom: 0.35rem;
+  }
+  .hospital-card-loc {
+    font-size: 0.82rem; color: var(--muted);
+    display: flex; align-items: center; gap: 4px;
+    margin-bottom: 1rem;
+  }
+  .hospital-card-loc svg { width: 12px; height: 12px; fill: var(--muted); }
+  .hospital-card-meta {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem; margin-bottom: 1.25rem;
+  }
+  .meta-chip {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 0.5rem 0.5rem;
+    text-align: center;
+  }
+  .meta-chip-val {
+    font-size: 1rem; font-weight: 700;
+    color: var(--charcoal); line-height: 1;
+  }
+  .meta-chip-key { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+  .meta-chip.highlight .meta-chip-val { color: var(--red); }
+  .hospital-card-footer {
+    display: flex; gap: 0.75rem;
+  }
+  .btn-card {
+    flex: 1; padding: 0.6rem; border-radius: 8px;
+    font-family: var(--font-body); font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; border: none;
+    text-align: center;
+  }
+  .btn-card.primary { background: var(--red); color: white; }
+  .btn-card.primary:hover { background: var(--red-dark); }
+  .btn-card.outline { background: var(--cream); color: var(--charcoal); }
+  .btn-card.outline:hover { background: rgba(200,16,46,0.08); color: var(--red); }
+
+  /* BLOOD BANK PAGE */
+  .blood-page-inner { padding: 2rem 4rem 4rem; }
+  .blood-type-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+  }
+  .blood-type-card {
+    background: white;
+    border: 1px solid rgba(26,26,46,0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .blood-type-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 120%, rgba(200,16,46,0.08) 0%, transparent 70%);
+    transition: opacity 0.3s;
+    opacity: 0;
+  }
+  .blood-type-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--red); }
+  .blood-type-card:hover::before { opacity: 1; }
+  .blood-type-symbol {
+    font-family: var(--font-display);
+    font-size: 2rem; font-weight: 900;
+    color: var(--red); line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .blood-type-units {
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--charcoal); margin-bottom: 0.25rem;
+  }
+  .blood-type-label { font-size: 0.75rem; color: var(--muted); }
+  .blood-status-bar {
+    height: 4px; background: #f0f0f0;
+    border-radius: 2px; margin-top: 1rem; overflow: hidden;
+  }
+  .blood-status-fill {
+    height: 100%; border-radius: 2px; transition: width 0.5s ease;
+  }
+  .status-critical .blood-type-units { color: var(--red); }
+  .status-critical .blood-status-fill { background: var(--red); }
+  .status-low .blood-type-units { color: #f59e0b; }
+  .status-low .blood-status-fill { background: #f59e0b; }
+  .status-ok .blood-status-fill { background: #22c55e; }
+
+  .blood-search-section {
+    background: var(--charcoal);
+    border-radius: 20px;
+    padding: 2.5rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2.5rem; align-items: center;
+    margin-bottom: 3rem;
+  }
+  .blood-search-text h3 {
+    font-family: var(--font-display);
+    font-size: 1.75rem; font-weight: 700;
+    color: white; margin-bottom: 0.5rem;
+  }
+  .blood-search-text p { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  .blood-form {
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .blood-form-row { display: flex; gap: 0.75rem; }
+  .blood-select, .blood-input {
+    flex: 1; padding: 0.75rem 1rem;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    color: white; font-family: var(--font-body); font-size: 0.875rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .blood-select option { background: var(--charcoal); }
+  .blood-select:focus, .blood-input:focus { border-color: var(--red); }
+  .blood-input::placeholder { color: rgba(255,255,255,0.3); }
+  .btn-blood-search {
+    background: var(--red); color: white;
+    border: none; border-radius: 10px;
+    padding: 0.75rem; font-family: var(--font-body);
+    font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-blood-search:hover { background: var(--red-dark); }
+
+  .blood-results { display: none; }
+  .blood-results.visible { display: block; }
+  .blood-result-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .blood-result-card {
+    background: white; border-radius: 14px;
+    border: 1px solid rgba(26,26,46,0.08);
+    padding: 1.25rem;
+    display: flex; align-items: center; gap: 1rem;
+    transition: all 0.2s;
+  }
+  .blood-result-card:hover { border-color: var(--red); transform: translateX(4px); }
+  .blood-result-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba(200,16,46,0.08);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: var(--font-display);
+    font-size: 1.1rem; font-weight: 900; color: var(--red);
+  }
+  .blood-result-info { flex: 1; }
+  .blood-result-hosp { font-size: 0.9rem; font-weight: 600; color: var(--charcoal); }
+  .blood-result-city { font-size: 0.78rem; color: var(--muted); }
+  .blood-result-units {
+    font-size: 0.8rem; font-weight: 700;
+    color: #22c55e;
+  }
+
+  /* APPOINTMENTS PAGE */
+  .appt-page { padding: 2rem 4rem 4rem; }
+  .appt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .form-card {
+    background: white; border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(26,26,46,0.08);
+  }
+  .form-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--charcoal); margin-bottom: 0.25rem;
+  }
+  .form-card p { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.75rem; }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-label {
+    display: block; font-size: 0.8rem; font-weight: 600;
+    color: var(--slate); margin-bottom: 0.4rem; letter-spacing: 0.02em;
+  }
+  .form-control {
+    width: 100%; padding: 0.75rem 1rem;
+    border: 1.5px solid rgba(26,26,46,0.12);
+    border-radius: 10px; background: var(--cream);
+    font-family: var(--font-body); font-size: 0.875rem;
+    color: var(--charcoal); outline: none; transition: border-color 0.2s;
+    appearance: none;
+  }
+  .form-control:focus { border-color: var(--red); background: white; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .btn-submit {
+    width: 100%; padding: 0.85rem;
+    background: var(--red); color: white;
+    border: none; border-radius: 10px;
+    font-family: var(--font-body); font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+  }
+  .btn-submit:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200,16,46,0.35); }
+
+  .appt-list { display: flex; flex-direction: column; gap: 1rem; }
+  .appt-item {
+    background: white; border-radius: 14px;
+    border: 1px solid rgba(26,26,46,0.08);
+    padding: 1.25rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    transition: all 0.2s;
+  }
+  .appt-item:hover { border-color: rgba(200,16,46,0.3); box-shadow: var(--shadow); }
+  .appt-date-box {
+    width: 56px; height: 56px; border-radius: 12px;
+    background: rgba(200,16,46,0.08);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .appt-day { font-size: 1.25rem; font-weight: 700; color: var(--red); line-height: 1; }
+  .appt-month { font-size: 0.65rem; font-weight: 600; color: var(--red); text-transform: uppercase; }
+  .appt-details { flex: 1; }
+  .appt-patient { font-size: 0.95rem; font-weight: 600; color: var(--charcoal); }
+  .appt-doctor { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+  .appt-status {
+    font-size: 0.72rem; font-weight: 700;
+    padding: 0.25rem 0.75rem; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .status-scheduled { background: rgba(59,130,246,0.1); color: #3b82f6; }
+  .status-completed { background: rgba(34,197,94,0.1); color: #16a34a; }
+  .status-cancelled { background: rgba(200,16,46,0.1); color: var(--red); }
+
+  /* DASHBOARD */
+  .dashboard { padding: 2rem 4rem 4rem; }
+  .dash-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.25rem; margin-bottom: 2rem; }
+  .dash-kpi {
+    background: white; border-radius: 16px;
+    border: 1px solid rgba(26,26,46,0.08);
+    padding: 1.5rem; position: relative; overflow: hidden;
+    transition: all 0.2s;
+  }
+  .dash-kpi:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .dash-kpi::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .dash-kpi.kpi-red::after { background: var(--red); }
+  .dash-kpi.kpi-blue::after { background: #3b82f6; }
+  .dash-kpi.kpi-green::after { background: #22c55e; }
+  .dash-kpi.kpi-amber::after { background: #f59e0b; }
+  .kpi-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1rem; font-size: 1.1rem;
+  }
+  .kpi-icon.red { background: rgba(200,16,46,0.1); }
+  .kpi-icon.blue { background: rgba(59,130,246,0.1); }
+  .kpi-icon.green { background: rgba(34,197,94,0.1); }
+  .kpi-icon.amber { background: rgba(251,191,36,0.1); }
+  .kpi-val {
+    font-family: var(--font-display);
+    font-size: 2rem; font-weight: 800;
+    color: var(--charcoal); line-height: 1;
+  }
+  .kpi-label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .kpi-change {
+    font-size: 0.75rem; font-weight: 600; margin-top: 0.5rem;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .kpi-change.up { color: #22c55e; }
+  .kpi-change.down { color: var(--red); }
+  .dash-two-col { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem; }
+  .dash-panel {
+    background: white; border-radius: 16px;
+    border: 1px solid rgba(26,26,46,0.08);
+    padding: 1.5rem;
+  }
+  .panel-title {
+    font-size: 0.9rem; font-weight: 700;
+    color: var(--charcoal); margin-bottom: 1.25rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .panel-title-link {
+    font-size: 0.78rem; color: var(--red);
+    cursor: pointer; font-weight: 500;
+  }
+  .recent-table { width: 100%; border-collapse: collapse; }
+  .recent-table th {
+    font-size: 0.72rem; font-weight: 700;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.06em; text-align: left;
+    padding: 0 0 0.75rem; border-bottom: 1px solid var(--border);
+  }
+  .recent-table td {
+    font-size: 0.83rem; padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border); color: var(--charcoal);
+  }
+  .recent-table tr:last-child td { border-bottom: none; }
+
+  .bed-chart { display: flex; flex-direction: column; gap: 0.75rem; }
+  .bed-row { display: flex; align-items: center; gap: 0.75rem; }
+  .bed-row-label { font-size: 0.8rem; color: var(--muted); width: 80px; flex-shrink: 0; }
+  .bed-row-bar {
+    flex: 1; height: 28px; background: var(--cream);
+    border-radius: 6px; overflow: hidden; position: relative;
+  }
+  .bed-row-fill {
+    height: 100%; border-radius: 6px;
+    display: flex; align-items: center; padding-left: 0.5rem;
+    font-size: 0.72rem; font-weight: 700; color: white;
+    transition: width 0.6s ease;
+  }
+  .bed-fill-red { background: var(--red); }
+  .bed-fill-blue { background: #3b82f6; }
+  .bed-fill-amber { background: #f59e0b; }
+  .bed-fill-green { background: #22c55e; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--charcoal); color: white;
+    border-radius: 12px; padding: 1rem 1.5rem;
+    font-size: 0.875rem; font-weight: 500;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    z-index: 9999;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    display: flex; align-items: center; gap: 0.75rem;
+    border-left: 4px solid var(--red);
+  }
+  .toast.visible { transform: translateY(0); opacity: 1; }
+
+  /* FOOTER */
+  footer {
+    background: var(--charcoal);
+    padding: 2rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-brand {
+    font-family: var(--font-display);
+    font-size: 1.1rem; font-weight: 700; color: white;
+  }
+  .footer-brand span { color: var(--red); }
+  .footer-copy { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+
+  /* ANIMATIONS */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .page.active > * { animation: fadeInUp 0.4s ease both; }
+  .page.active > *:nth-child(2) { animation-delay: 0.08s; }
+  .page.active > *:nth-child(3) { animation-delay: 0.16s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hospitals-grid { padding: 0 2rem 2rem; grid-template-columns: 1fr; }
+    .search-bar-wrap { padding: 1.5rem 2rem; }
+    .blood-page-inner { padding: 1.5rem 2rem 2rem; }
+    .blood-type-grid { grid-template-columns: repeat(2,1fr); }
+    .blood-search-section { grid-template-columns: 1fr; gap: 1.5rem; }
+    .appt-page { padding: 1.5rem 2rem 2rem; }
+    .appt-grid { grid-template-columns: 1fr; }
+    .dashboard { padding: 1.5rem 2rem 2rem; }
+    .dash-grid { grid-template-columns: 1fr 1fr; }
+    .dash-two-col { grid-template-columns: 1fr; }
+    nav { padding: 0 1.5rem; }
+    .hero-left { padding: 3rem 2rem; }
+    .hero h1 { font-size: 2.75rem; }
+    footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+    </div>
+    <span class="nav-logo-text">Medi<span>Core</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a onclick="showPage('hospitals')" id="nav-hospitals">Hospitals</a></li>
+    <li><a onclick="showPage('blood')" id="nav-blood">Blood Bank</a></li>
+    <li><a onclick="showPage('appointments')" id="nav-appointments">Appointments</a></li>
+    <li><a onclick="showPage('dashboard')" id="nav-dashboard">Dashboard</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-ghost">Sign In</button>
+    <button class="btn-primary" onclick="showToast('🏥 Registration coming soon!')">Register Hospital</button>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Live Healthcare Network</div>
+      <h1>Find <em>Care,</em><br>Fast & <em>Near</em></h1>
+      <p class="hero-sub">MediCore connects you to hospitals, real-time bed availability, blood banks, and doctors — all in one intelligent platform.</p>
+      <div class="hero-actions">
+        <button class="btn-lg primary" onclick="showPage('hospitals')">Find a Hospital</button>
+        <button class="btn-lg outline" onclick="showPage('blood')">Blood Bank</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">247</span>
+          <span class="stat-label">Hospitals Listed</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">12K+</span>
+          <span class="stat-label">Beds Tracked</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">98%</span>
+          <span class="stat-label">Uptime</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-card-stack">
+        <div class="info-card">
+          <div class="info-card-header">
+            <span class="info-card-title">City General Hospital</span>
+            <span class="info-card-badge badge-green">● Live</span>
+          </div>
+          <div class="info-card-value">142</div>
+          <div class="info-card-sub">Beds Available of 300 total</div>
+          <div class="info-card-bar"><div class="info-card-fill" style="width:47%;background:#22c55e;"></div></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-header">
+            <span class="info-card-title">Blood Bank — O+</span>
+            <span class="info-card-badge badge-red">● Critical</span>
+          </div>
+          <div class="info-card-value">8 units</div>
+          <div class="info-card-sub">Across 3 hospitals</div>
+          <div class="info-card-bar"><div class="info-card-fill" style="width:16%;background:#C8102E;"></div></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-header">
+            <span class="info-card-title">Today's Appointments</span>
+            <span class="info-card-badge badge-amber">● 4 Pending</span>
+          </div>
+          <div class="info-card-value">18</div>
+          <div class="info-card-sub">Scheduled today across doctors</div>
+          <div class="info-card-bar"><div class="info-card-fill" style="width:72%;background:#f59e0b;"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOSPITALS PAGE -->
+<div id="page-hospitals" class="page">
+  <div class="section-header">
+    <div class="section-eyebrow">Hospital Directory</div>
+    <div class="section-title">Find Hospitals Near You</div>
+    <p class="section-sub">Browse verified hospitals with real-time bed availability, department info, and contact details.</p>
+  </div>
+  <div class="search-bar-wrap">
+    <div class="search-input-wrap">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input class="search-input" type="text" placeholder="Search by hospital name or city..." oninput="filterHospitals(this.value)"/>
+    </div>
+    <select class="filter-select" onchange="filterByCity(this.value)">
+      <option value="">All Cities</option>
+      <option value="Bengaluru">Bengaluru</option>
+      <option value="Chennai">Chennai</option>
+      <option value="Delhi">Delhi</option>
+      <option value="Mumbai">Mumbai</option>
+    </select>
+    <select class="filter-select">
+      <option value="">All Types</option>
+      <option>Government</option>
+      <option>Private</option>
+      <option>Multi-Specialty</option>
+    </select>
+  </div>
+  <div class="hospitals-grid" id="hospitals-grid">
+    <!-- Cards injected by JS -->
+  </div>
+</div>
+
+<!-- BLOOD BANK PAGE -->
+<div id="page-blood" class="page">
+  <div class="section-header">
+    <div class="section-eyebrow">Blood Bank Network</div>
+    <div class="section-title">Blood Availability</div>
+    <p class="section-sub">Find blood type availability across all partner hospitals in real time.</p>
+  </div>
+  <div class="blood-page-inner">
+    <div class="blood-type-grid" id="blood-type-grid">
+      <!-- injected by JS -->
+    </div>
+    <div class="blood-search-section">
+      <div class="blood-search-text">
+        <h3>Search by Blood Type & City</h3>
+        <p>Find hospitals with your required blood type. We'll show you the closest options with highest units.</p>
+      </div>
+      <div class="blood-form">
+        <div class="blood-form-row">
+          <select class="blood-select" id="blood-type-select">
+            <option value="">Blood Type</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>O+</option><option>O-</option>
+            <option>AB+</option><option>AB-</option>
+          </select>
+          <select class="blood-select" id="city-select">
+            <option value="">City</option>
+            <option>Bengaluru</option>
+            <option>Chennai</option>
+            <option>Delhi</option>
+            <option>Mumbai</option>
+          </select>
+        </div>
+        <input class="blood-input" type="text" placeholder="Patient name (optional)"/>
+        <button class="btn-blood-search" onclick="searchBlood()">Search Blood Availability</button>
+      </div>
+    </div>
+    <div class="blood-results" id="blood-results">
+      <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--charcoal);margin-bottom:1rem;" id="blood-result-title"></div>
+      <div class="blood-result-grid" id="blood-result-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APPOINTMENTS PAGE -->
+<div id="page-appointments" class="page">
+  <div class="section-header">
+    <div class="section-eyebrow">Appointments</div>
+    <div class="section-title">Book & Manage Appointments</div>
+    <p class="section-sub">Schedule consultations with doctors across hospitals in a few clicks.</p>
+  </div>
+  <div class="appt-page">
+    <div class="appt-grid">
+      <div class="form-card">
+        <h3>Book Appointment</h3>
+        <p>Fill in the details to schedule your visit</p>
+        <div class="form-group">
+          <label class="form-label">Patient Name</label>
+          <input class="form-control" type="text" placeholder="Full name" id="appt-patient"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Hospital</label>
+            <select class="form-control" id="appt-hospital">
+              <option>City General Hospital</option>
+              <option>Apollo Medical Center</option>
+              <option>AIIMS Regional</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <select class="form-control">
+              <option>Cardiology</option>
+              <option>Orthopedics</option>
+              <option>Neurology</option>
+              <option>General OPD</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Doctor</label>
+          <select class="form-control">
+            <option>Dr. Ramesh Kumar — Cardiologist</option>
+            <option>Dr. Priya Nair — Orthopedician</option>
+            <option>Dr. Anil Mehta — Neurologist</option>
+            <option>Dr. Sunita Reddy — General Physician</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input class="form-control" type="date" id="appt-date"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Time</label>
+            <select class="form-control">
+              <option>09:00 AM</option>
+              <option>09:30 AM</option>
+              <option>10:00 AM</option>
+              <option>10:30 AM</option>
+              <option>11:00 AM</option>
+              <option>02:00 PM</option>
+              <option>02:30 PM</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reason for Visit</label>
+          <textarea class="form-control" rows="3" placeholder="Briefly describe your symptoms..."></textarea>
+        </div>
+        <button class="btn-submit" onclick="bookAppointment()">Book Appointment →</button>
+      </div>
+      <div>
+        <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--charcoal);margin-bottom:1rem;">Upcoming Appointments</div>
+        <div class="appt-list" id="appt-list">
+          <!-- injected by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div id="page-dashboard" class="page">
+  <div class="section-header">
+    <div class="section-eyebrow">Admin Panel</div>
+    <div class="section-title">System Dashboard</div>
+    <p class="section-sub">Real-time overview of hospital network, bed occupancy, blood stock, and appointments.</p>
+  </div>
+  <div class="dashboard">
+    <div class="dash-grid">
+      <div class="dash-kpi kpi-blue">
+        <div class="kpi-icon blue">🏥</div>
+        <div class="kpi-val">3</div>
+        <div class="kpi-label">Hospitals Registered</div>
+        <div class="kpi-change up">↑ 1 this month</div>
+      </div>
+      <div class="dash-kpi kpi-green">
+        <div class="kpi-icon green">🛏️</div>
+        <div class="kpi-val">487</div>
+        <div class="kpi-label">Available Beds</div>
+        <div class="kpi-change up">↑ 23 today</div>
+      </div>
+      <div class="dash-kpi kpi-red">
+        <div class="kpi-icon red">🩸</div>
+        <div class="kpi-val">8</div>
+        <div class="kpi-label">Critical Blood Stocks</div>
+        <div class="kpi-change down">↓ O- below threshold</div>
+      </div>
+      <div class="dash-kpi kpi-amber">
+        <div class="kpi-icon amber">📋</div>
+        <div class="kpi-val">18</div>
+        <div class="kpi-label">Appointments Today</div>
+        <div class="kpi-change up">↑ 4 from yesterday</div>
+      </div>
+    </div>
+    <div class="dash-two-col">
+      <div class="dash-panel">
+        <div class="panel-title">
+          Recent Admissions
+          <span class="panel-title-link" onclick="showPage('hospitals')">View all →</span>
+        </div>
+        <table class="recent-table">
+          <thead><tr>
+            <th>Patient</th><th>Hospital</th><th>Ward</th><th>Status</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>Arjun Sharma</td><td>City General</td><td>Cardiology</td><td><span class="appt-status status-scheduled">Admitted</span></td></tr>
+            <tr><td>Kavya Iyer</td><td>Apollo</td><td>Ortho</td><td><span class="appt-status status-completed">Discharged</span></td></tr>
+            <tr><td>Rohit Verma</td><td>AIIMS</td><td>ICU</td><td><span class="appt-status status-scheduled">Admitted</span></td></tr>
+            <tr><td>Meena Pillai</td><td>City General</td><td>General</td><td><span class="appt-status status-cancelled">Critical</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="dash-panel">
+        <div class="panel-title">Bed Occupancy by Ward</div>
+        <div class="bed-chart">
+          <div class="bed-row">
+            <span class="bed-row-label">General</span>
+            <div class="bed-row-bar"><div class="bed-row-fill bed-fill-blue" style="width:72%">72%</div></div>
+          </div>
+          <div class="bed-row">
+            <span class="bed-row-label">ICU</span>
+            <div class="bed-row-bar"><div class="bed-row-fill bed-fill-red" style="width:91%">91%</div></div>
+          </div>
+          <div class="bed-row">
+            <span class="bed-row-label">Cardiology</span>
+            <div class="bed-row-bar"><div class="bed-row-fill bed-fill-amber" style="width:58%">58%</div></div>
+          </div>
+          <div class="bed-row">
+            <span class="bed-row-label">Maternity</span>
+            <div class="bed-row-bar"><div class="bed-row-fill bed-fill-green" style="width:34%">34%</div></div>
+          </div>
+          <div class="bed-row">
+            <span class="bed-row-label">Ortho</span>
+            <div class="bed-row-bar"><div class="bed-row-fill bed-fill-blue" style="width:45%">45%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Medi<span>Core</span> HMS</div>
+  <div class="footer-copy">DBMS Project — Hospitality Management System © 2025</div>
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────
+const hospitals = [
+  { id:1, name:'City General Hospital', city:'Bengaluru', state:'Karnataka', phone:'080-12345678', beds:300, available:142, departments:5, rating:'4.6', type:'Government' },
+  { id:2, name:'Apollo Medical Center', city:'Chennai', state:'Tamil Nadu', phone:'044-87654321', beds:450, available:218, departments:8, rating:'4.8', type:'Private' },
+  { id:3, name:'AIIMS Regional', city:'Delhi', state:'Delhi', phone:'011-11223344', beds:800, available:320, departments:15, rating:'4.9', type:'Government' },
+  { id:4, name:'Manipal Hospital', city:'Bengaluru', state:'Karnataka', phone:'080-22334455', beds:550, available:195, departments:12, rating:'4.7', type:'Private' },
+  { id:5, name:'Fortis Healthcare', city:'Mumbai', state:'Maharashtra', phone:'022-33445566', beds:400, available:88, departments:10, rating:'4.5', type:'Private' },
+  { id:6, name:'Narayana Hrudayalaya', city:'Bengaluru', state:'Karnataka', phone:'080-44556677', beds:600, available:260, departments:9, rating:'4.8', type:'Multi-Specialty' },
+];
+
+const bloodData = [
+  { type:'A+', units:50, max:80 }, { type:'A-', units:20, max:60 },
+  { type:'B+', units:40, max:80 }, { type:'B-', units:15, max:60 },
+  { type:'O+', units:60, max:100 }, { type:'O-', units:8, max:60 },
+  { type:'AB+', units:25, max:50 }, { type:'AB-', units:6, max:40 },
+];
+
+const appointments = [
+  { patient:'Arjun Sharma', doctor:'Dr. Ramesh Kumar', date:'01', month:'Jun', status:'scheduled', dept:'Cardiology' },
+  { patient:'Kavya Iyer', doctor:'Dr. Priya Nair', date:'01', month:'Jun', status:'scheduled', dept:'Orthopedics' },
+  { patient:'Rohit Verma', doctor:'Dr. Anil Mehta', date:'02', month:'Jun', status:'completed', dept:'Neurology' },
+  { patient:'Meena Pillai', doctor:'Dr. Sunita Reddy', date:'03', month:'Jun', status:'scheduled', dept:'General OPD' },
+];
+
+const bloodHospitals = [
+  { hospital:'City General Hospital', city:'Bengaluru', units:{ 'A+':50,'A-':20,'B+':40,'B-':15,'O+':60,'O-':8,'AB+':25,'AB-':6 } },
+  { hospital:'Apollo Medical Center', city:'Chennai', units:{ 'A+':30,'B+':35,'O+':45,'AB+':18,'A-':5,'B-':8,'O-':3,'AB-':4 } },
+  { hospital:'AIIMS Regional', city:'Delhi', units:{ 'A+':80,'A-':35,'B+':70,'B-':22,'O+':90,'O-':15,'AB+':40,'AB-':12 } },
+  { hospital:'Manipal Hospital', city:'Bengaluru', units:{ 'A+':25,'B+':20,'O+':35,'AB+':10,'A-':8,'B-':5,'O-':4,'AB-':3 } },
+];
+
+// ── RENDER FUNCTIONS ──────────────────────────────────────────
+let allHospitals = [...hospitals];
+
+function renderHospitals(list) {
+  const grid = document.getElementById('hospitals-grid');
+  grid.innerHTML = list.map(h => {
+    const occ = Math.round((1 - h.available / h.beds) * 100);
+    return `
+    <div class="hospital-card" onclick="showToast('📋 ${h.name} details — coming soon!')">
+      <div class="hospital-card-img">
+        <svg viewBox="0 0 48 48"><path d="M42 18H30V6H18v12H6v12h12v12h12V30h12z"/></svg>
+        <div class="hospital-card-rating">⭐ ${h.rating}</div>
+      </div>
+      <div class="hospital-card-body">
+        <div class="hospital-card-name">${h.name}</div>
+        <div class="hospital-card-loc">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          ${h.city}, ${h.state}
+        </div>
+        <div class="hospital-card-meta">
+          <div class="meta-chip highlight">
+            <div class="meta-chip-val">${h.available}</div>
+            <div class="meta-chip-key">Available</div>
+          </div>
+          <div class="meta-chip">
+            <div class="meta-chip-val">${h.beds}</div>
+            <div class="meta-chip-key">Total Beds</div>
+          </div>
+          <div class="meta-chip">
+            <div class="meta-chip-val">${h.departments}</div>
+            <div class="meta-chip-key">Depts</div>
+          </div>
+        </div>
+        <div class="hospital-card-footer">
+          <button class="btn-card primary" onclick="event.stopPropagation();showPage('appointments')">Book Appt</button>
+          <button class="btn-card outline" onclick="event.stopPropagation();showToast('📞 ${h.phone}')">Call Now</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBloodTypes() {
+  const grid = document.getElementById('blood-type-grid');
+  grid.innerHTML = bloodData.map(b => {
+    const pct = Math.round((b.units / b.max) * 100);
+    const cls = b.units < 10 ? 'status-critical' : b.units < 25 ? 'status-low' : 'status-ok';
+    const label = b.units < 10 ? 'Critical' : b.units < 25 ? 'Low' : 'Sufficient';
+    const clr = b.units < 10 ? '#C8102E' : b.units < 25 ? '#f59e0b' : '#22c55e';
+    return `
+    <div class="blood-type-card ${cls}" onclick="document.getElementById('blood-type-select').value='${b.type}';searchBlood()">
+      <div class="blood-type-symbol">${b.type}</div>
+      <div class="blood-type-units">${b.units} units</div>
+      <div class="blood-type-label">${label} — ${pct}% capacity</div>
+      <div class="blood-status-bar"><div class="blood-status-fill" style="width:${pct}%;background:${clr};"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderAppointments() {
+  const list = document.getElementById('appt-list');
+  list.innerHTML = appointments.map(a => `
+    <div class="appt-item">
+      <div class="appt-date-box">
+        <div class="appt-day">${a.date}</div>
+        <div class="appt-month">${a.month}</div>
+      </div>
+      <div class="appt-details">
+        <div class="appt-patient">${a.patient}</div>
+        <div class="appt-doctor">${a.doctor} · ${a.dept}</div>
+      </div>
+      <span class="appt-status status-${a.status}">${a.status}</span>
+    </div>
+  `).join('');
+}
+
+// ── FILTER ────────────────────────────────────────────────────
+function filterHospitals(q) {
+  const filtered = hospitals.filter(h =>
+    h.name.toLowerCase().includes(q.toLowerCase()) ||
+    h.city.toLowerCase().includes(q.toLowerCase())
+  );
+  renderHospitals(filtered);
+}
+function filterByCity(city) {
+  const filtered = city ? hospitals.filter(h => h.city === city) : hospitals;
+  renderHospitals(filtered);
+}
+
+// ── BLOOD SEARCH ──────────────────────────────────────────────
+function searchBlood() {
+  const bt = document.getElementById('blood-type-select').value;
+  const city = document.getElementById('city-select').value;
+  if (!bt) { showToast('⚠️ Please select a blood type'); return; }
+
+  const results = bloodHospitals.filter(h =>
+    (!city || h.city === city) && h.units[bt] > 0
+  ).sort((a,b) => b.units[bt] - a.units[bt]);
+
+  const section = document.getElementById('blood-results');
+  const title = document.getElementById('blood-result-title');
+  const grid = document.getElementById('blood-result-grid');
+  title.textContent = `Results for ${bt} ${city ? 'in ' + city : '(all cities)'} — ${results.length} hospital(s) found`;
+  grid.innerHTML = results.map(h => `
+    <div class="blood-result-card">
+      <div class="blood-result-icon">${bt}</div>
+      <div class="blood-result-info">
+        <div class="blood-result-hosp">${h.hospital}</div>
+        <div class="blood-result-city">${h.city}</div>
+      </div>
+      <div class="blood-result-units">${h.units[bt]} units</div>
+    </div>
+  `).join('');
+  section.classList.add('visible');
+  section.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+// ── APPOINTMENT BOOKING ───────────────────────────────────────
+function bookAppointment() {
+  const name = document.getElementById('appt-patient').value.trim();
+  const date = document.getElementById('appt-date').value;
+  if (!name) { showToast('⚠️ Please enter patient name'); return; }
+  if (!date) { showToast('⚠️ Please select a date'); return; }
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2,'0');
+  const mon = d.toLocaleString('en',{month:'short'});
+  appointments.unshift({ patient: name, doctor:'Dr. Ramesh Kumar', date: day, month: mon, status:'scheduled', dept:'Cardiology' });
+  renderAppointments();
+  document.getElementById('appt-patient').value = '';
+  document.getElementById('appt-date').value = '';
+  showToast(`✅ Appointment booked for ${name} on ${day} ${mon}`);
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), 3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+renderHospitals(hospitals);
+renderBloodTypes();
+renderAppointments();
+
+// Set today's date as min for appointment
+document.getElementById('appt-date').min = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
