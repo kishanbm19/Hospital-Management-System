@@ -210,6 +210,7 @@ class Doctor(models.Model):
     speciality = models.CharField(max_length=100, blank=True, null=True)
     qualification = models.CharField(max_length=150, blank=True, null=True)
     dept = models.ForeignKey(Department, models.DO_NOTHING)
+    hospital = models.ForeignKey('Hospital', models.DO_NOTHING, blank=True, null=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     email = models.CharField(max_length=100, blank=True, null=True)
     available_days = models.CharField(max_length=100, blank=True, null=True)
