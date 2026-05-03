@@ -7,7 +7,8 @@ const Hospitals = () => {
     departments: [],
     doctors: [],
     appointments: [],
-    patients: []
+    patients: [],
+    bedSummaries: []
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,12 +19,13 @@ const Hospitals = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [hRes, deptRes, docRes, apptRes, patRes] = await Promise.all([
+        const [hRes, deptRes, docRes, apptRes, patRes, bedsRes] = await Promise.all([
           fetch('http://127.0.0.1:8000/api/hospitals/'),
           fetch('http://127.0.0.1:8000/api/departments/'),
           fetch('http://127.0.0.1:8000/api/doctors/'),
           fetch('http://127.0.0.1:8000/api/appointments/'),
-          fetch('http://127.0.0.1:8000/api/patients/')
+          fetch('http://127.0.0.1:8000/api/patients/'),
+          fetch('http://127.0.0.1:8000/api/hospital_beds/')
         ]);
 
         if (!hRes.ok) throw new Error('Failed to fetch data');
@@ -33,7 +35,8 @@ const Hospitals = () => {
           departments: await deptRes.json(),
           doctors: await docRes.json(),
           appointments: await apptRes.json(),
-          patients: await patRes.json()
+          patients: await patRes.json(),
+          bedSummaries: await bedsRes.json()
         });
       } catch (err) {
         setError(err.message);
@@ -88,7 +91,6 @@ const Hospitals = () => {
                 >
                   <div className="card-header">
                     <h3>{hospital.name}</h3>
-                    <span className="badge">Beds: {hospital.total_beds || 'N/A'}</span>
                   </div>
                   <div className="card-body">
                     <p><strong>City:</strong> {hospital.city}</p>
@@ -109,7 +111,6 @@ const Hospitals = () => {
             </button>
             <div className="dashboard-title-row">
               <h2>{selectedHospital.name} Dashboard</h2>
-              <span className="badge">Beds: {selectedHospital.total_beds || 'N/A'}</span>
             </div>
             <p>{selectedHospital.address}, {selectedHospital.city}, {selectedHospital.state}</p>
             
@@ -194,7 +195,9 @@ const Hospitals = () => {
                       related.pats.map(patient => {
                         const patAppts = related.appts.filter(a => a.patient === patient.patient_id);
                         const latestAppt = patAppts[patAppts.length - 1]; // or just the first one
-                        const isEmergency = latestAppt?.reason?.toLowerCase().includes('emergency') || 
+                        const isEmergency = patient.priority === 'emergency' || 
+                                            patient.priority === 'critical' || 
+                                            latestAppt?.reason?.toLowerCase().includes('emergency') || 
                                             latestAppt?.reason?.toLowerCase().includes('urgent') ||
                                             latestAppt?.reason?.toLowerCase().includes('critical');
 

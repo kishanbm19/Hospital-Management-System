@@ -264,7 +264,21 @@ class Patient(models.Model):
     email = models.CharField(max_length=100, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     emergency_contact = models.CharField(max_length=15, blank=True, null=True)
-
+    priority = models.CharField(max_length=20, default='normal')
     class Meta:
         managed = False
         db_table = 'patient'
+
+class VwHospitalBedSummary(models.Model):
+    hospital_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=150)
+    city = models.CharField(max_length=80)
+    total_beds = models.IntegerField()
+    available = models.IntegerField()
+    occupied = models.IntegerField()
+    maintenance = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'vw_hospital_bed_summary'
+

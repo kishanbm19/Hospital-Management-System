@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .models import Hospital, Doctor, Patient, Appointment, Bloodbank, Department
+from .models import Hospital, Doctor, Patient, Appointment, Bloodbank, Department, Donor, VwHospitalBedSummary
 from .serializer import *
 
 class HospitalViewSet(viewsets.ModelViewSet):
@@ -25,3 +25,11 @@ class AppointmentViewSet(viewsets.ModelViewSet):
 class BloodbankViewSet(viewsets.ModelViewSet):
     queryset = Bloodbank.objects.all()
     serializer_class = BloodbankSerializer
+
+class DonorViewSet(viewsets.ModelViewSet):
+    queryset = Donor.objects.all()
+    serializer_class = DonorSerializer
+
+class VwHospitalBedSummaryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = VwHospitalBedSummary.objects.all()
+    serializer_class = VwHospitalBedSummarySerializer

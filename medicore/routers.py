@@ -10,6 +10,8 @@ router.register(r'doctors', DoctorViewSet)
 router.register(r'patients', PatientViewSet)
 router.register(r'appointments', AppointmentViewSet)
 router.register(r'blood', BloodbankViewSet)
+router.register(r'donors', DonorViewSet)
+router.register(r'hospital_beds', VwHospitalBedSummaryViewSet)
 urlpatterns = [
     path('', home),  
 ] + router.urls

@@ -4,6 +4,7 @@ import './pages.css';
 const BloodBank = () => {
   const [bloodbank, setBloodbank] = useState([]);
   const [hospitals, setHospitals] = useState([]);
+  const [donors, setDonors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedBloodType, setSelectedBloodType] = useState(null);
@@ -11,20 +12,23 @@ const BloodBank = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [bloodRes, hospRes] = await Promise.all([
+        const [bloodRes, hospRes, donorRes] = await Promise.all([
           fetch('http://127.0.0.1:8000/api/blood/'),
-          fetch('http://127.0.0.1:8000/api/hospitals/')
+          fetch('http://127.0.0.1:8000/api/hospitals/'),
+          fetch('http://127.0.0.1:8000/api/donors/')
         ]);
 
-        if (!bloodRes.ok || !hospRes.ok) {
+        if (!bloodRes.ok || !hospRes.ok || !donorRes.ok) {
           throw new Error('Failed to fetch data');
         }
 
         const bloodData = await bloodRes.json();
         const hospData = await hospRes.json();
+        const donorData = await donorRes.json();
 
         setBloodbank(bloodData);
         setHospitals(hospData);
+        setDonors(donorData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -106,20 +110,40 @@ const BloodBank = () => {
           <div className="list-container">
             {groupedData[selectedBloodType].map((record) => {
               const hospital = getHospitalDetails(record.hospital);
+              const relatedDonors = donors.filter(d => d.blood_type === selectedBloodType);
+              
               return (
-                <div key={record.bank_id} className="data-card row-card">
-                  <div className="row-info">
-                    <h4>{hospital.name || `Hospital #${record.hospital}`}</h4>
-                    <p><strong>Phone:</strong> {hospital.phone || 'N/A'}</p>
-                    <p><strong>Address:</strong> {hospital.city}, {hospital.state}</p>
-                    <p className="last-updated">Updated: {new Date(record.last_updated).toLocaleDateString()}</p>
-                  </div>
-                  <div className="row-stats">
-                    <div className="units-badge">
-                      <span className="units-number">{record.units_available}</span>
-                      <span className="units-label">Units</span>
+                <div key={record.bank_id} className="data-card row-card" style={{flexDirection: 'column', alignItems: 'stretch', padding: '1.5rem'}}>
+                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
+                    <div className="row-info">
+                      <h4>{hospital.name || `Hospital #${record.hospital}`}</h4>
+                      <p><strong>Phone:</strong> {hospital.phone || 'N/A'}</p>
+                      <p><strong>Address:</strong> {hospital.city}, {hospital.state}</p>
+                    </div>
+                    <div className="row-stats">
+                      <div className="units-badge">
+                        <span className="units-number">{record.units_available}</span>
+                        <span className="units-label">Units</span>
+                      </div>
                     </div>
                   </div>
+                  
+                  {relatedDonors.length > 0 && (
+                    <div className="donors-section" style={{marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border)'}}>
+                      <h5 style={{marginBottom: '0.5rem', color: 'var(--text-secondary)'}}>Recent Donors</h5>
+                      <div className="donors-list" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem'}}>
+                        {relatedDonors.map(donor => {
+                          return (
+                            <div key={donor.donor_id} className="donor-card" style={{background: 'var(--bg-card)', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border)'}}>
+                              <p style={{margin: '0 0 0.2rem 0', fontWeight: 'bold'}}>{donor.name || 'Unknown Donor'}</p>
+                              <p style={{margin: '0', fontSize: '0.85rem', color: 'var(--text-secondary)'}}>📱 {donor.phone || 'N/A'}</p>
+                              <p style={{margin: '0', fontSize: '0.85rem', color: 'var(--text-secondary)'}}>📅 Donated: {donor.last_donated ? new Date(donor.last_donated).toLocaleDateString() : 'Unknown'}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )
             })}
