@@ -72,6 +72,14 @@ const Home = () => {
             >
               Access Hospitals Overview
             </button>
+
+            <button 
+              className="attractive-btn purple-btn"
+              onClick={() => navigate('/book-appointment')}
+              style={{ marginTop: '1rem' }}
+            >
+              Book an Appointment
+            </button>
           </div>
         </div>
 

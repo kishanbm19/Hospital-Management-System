@@ -110,7 +110,7 @@ const BloodBank = () => {
           <div className="list-container">
             {groupedData[selectedBloodType].map((record) => {
               const hospital = getHospitalDetails(record.hospital);
-              const relatedDonors = donors.filter(d => d.blood_type === selectedBloodType);
+              const relatedDonors = donors.filter(d => d.blood_type === selectedBloodType && d.hospital === hospital.hospital_id);
               
               return (
                 <div key={record.bank_id} className="data-card row-card" style={{flexDirection: 'column', alignItems: 'stretch', padding: '1.5rem'}}>

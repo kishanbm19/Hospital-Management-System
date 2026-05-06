@@ -8,21 +8,6 @@
 from django.db import models
 
 
-class Admission(models.Model):
-    admission_id = models.AutoField(primary_key=True)
-    admit_date = models.DateField()
-    discharge_date = models.DateField(blank=True, null=True)
-    diagnosis = models.TextField(blank=True, null=True)
-    patient = models.ForeignKey('Patient', models.DO_NOTHING)
-    bed = models.ForeignKey('Bed', models.DO_NOTHING)
-    appt = models.ForeignKey('Appointment', models.DO_NOTHING, blank=True, null=True)
-    attending_doc = models.ForeignKey('Doctor', models.DO_NOTHING, db_column='attending_doc', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'admission'
-
-
 class Appointment(models.Model):
     appt_id = models.AutoField(primary_key=True)
     appt_date = models.DateField()
@@ -112,7 +97,7 @@ class Bed(models.Model):
     ward = models.CharField(max_length=50)
     bed_number = models.CharField(max_length=10)
     bed_type = models.CharField(max_length=12, blank=True, null=True)
-    status = models.CharField(max_length=17, blank=True, null=True)
+    status = models.CharField(max_length=11, blank=True, null=True)
     hospital = models.ForeignKey('Hospital', models.DO_NOTHING)
 
     class Meta:
@@ -132,19 +117,6 @@ class Bloodbank(models.Model):
         managed = False
         db_table = 'bloodbank'
         unique_together = (('hospital', 'blood_type'),)
-
-
-class Blooddonation(models.Model):
-    donation_id = models.AutoField(primary_key=True)
-    donation_date = models.DateField()
-    units_donated = models.IntegerField()
-    donor = models.ForeignKey('Donor', models.DO_NOTHING)
-    bank = models.ForeignKey(Bloodbank, models.DO_NOTHING)
-    verified_by = models.CharField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'blooddonation'
 
 
 class Department(models.Model):
@@ -210,7 +182,6 @@ class Doctor(models.Model):
     speciality = models.CharField(max_length=100, blank=True, null=True)
     qualification = models.CharField(max_length=150, blank=True, null=True)
     dept = models.ForeignKey(Department, models.DO_NOTHING)
-    hospital = models.ForeignKey('Hospital', models.DO_NOTHING, blank=True, null=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     email = models.CharField(max_length=100, blank=True, null=True)
     available_days = models.CharField(max_length=100, blank=True, null=True)
@@ -230,6 +201,7 @@ class Donor(models.Model):
     email = models.CharField(max_length=100, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     last_donated = models.DateField(blank=True, null=True)
+    hospital = models.ForeignKey('Hospital', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -244,11 +216,6 @@ class Hospital(models.Model):
     state = models.CharField(max_length=80)
     pincode = models.CharField(max_length=10, blank=True, null=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
-    email = models.CharField(max_length=100, blank=True, null=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    established = models.TextField(blank=True, null=True)  # This field type is a guess.
-    total_beds = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -265,7 +232,9 @@ class Patient(models.Model):
     email = models.CharField(max_length=100, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     emergency_contact = models.CharField(max_length=15, blank=True, null=True)
-    priority = models.CharField(max_length=20, default='normal')
+    priority = models.CharField(max_length=9, blank=True, null=True)
+    hospital = models.ForeignKey(Hospital, models.DO_NOTHING, blank=True, null=True)
+
     class Meta:
         managed = False
         db_table = 'patient'
@@ -282,4 +251,3 @@ class VwHospitalBedSummary(models.Model):
     class Meta:
         managed = False
         db_table = 'vw_hospital_bed_summary'
-

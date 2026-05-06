@@ -2,6 +2,7 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Home from './pages/home';
 import Hospitals from './pages/hospitals';
 import BloodBank from './pages/bloodbank';
+import BookAppointment from './pages/book_appointment';
 import './App.css';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/hospitals" element={<Hospitals />} />
           <Route path="/bloodbank" element={<BloodBank />} />
+          <Route path="/book-appointment" element={<BookAppointment />} />
         </Routes>
       </main>
     </div>

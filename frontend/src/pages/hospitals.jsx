@@ -49,11 +49,10 @@ const Hospitals = () => {
 
   const getRelatedData = (hospitalId) => {
     const hospitalDepts = data.departments.filter(d => d.hospital === hospitalId).map(d => d.dept_id);
-    const hospitalDocs = data.doctors.filter(d => hospitalDepts.includes(d.dept) || d.hospital === hospitalId);
+    const hospitalDocs = data.doctors.filter(d => hospitalDepts.includes(d.dept));
     const docIds = hospitalDocs.map(d => d.doctor_id);
     const hospitalAppts = data.appointments.filter(a => docIds.includes(a.doctor));
-    const patIds = [...new Set(hospitalAppts.map(a => a.patient))];
-    const hospitalPatients = data.patients.filter(p => patIds.includes(p.patient_id));
+    const hospitalPatients = data.patients.filter(p => p.hospital === hospitalId);
 
     return { docs: hospitalDocs, appts: hospitalAppts, pats: hospitalPatients };
   };
