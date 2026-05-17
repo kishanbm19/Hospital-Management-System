@@ -33,3 +33,4 @@ DBMS Mini Project | Full Stack Web Application
 <img width="1149" height="1019" alt="image" src="https://github.com/user-attachments/assets/9a6a2ec1-ac7c-4676-b3a1-3e1e975aab04" />
 <img width="1055" height="1036" alt="image" src="https://github.com/user-attachments/assets/99fed386-ddfb-40ff-aba5-2268753668b5" />
 <img width="727" height="1027" alt="image" src="https://github.com/user-attachments/assets/b5cafb83-5b1b-4e5c-bc7f-f29a1868dfac" />
+<img width="1301" height="1010" alt="image" src="https://github.com/user-attachments/assets/e6abbc17-ea56-4c43-bce8-1dcb2ccea8bb" />
