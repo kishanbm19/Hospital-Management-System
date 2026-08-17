@@ -9,7 +9,7 @@ const Doctors = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/doctors/');
+        const response = await fetch('http://https://hospital-management-system-8qmy.vercel.app/api/doctors/');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

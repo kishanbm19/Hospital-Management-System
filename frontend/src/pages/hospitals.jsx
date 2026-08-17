@@ -20,12 +20,12 @@ const Hospitals = () => {
     const fetchData = async () => {
       try {
         const [hRes, deptRes, docRes, apptRes, patRes, bedsRes] = await Promise.all([
-          fetch('http://127.0.0.1:8000/api/hospitals/'),
-          fetch('http://127.0.0.1:8000/api/departments/'),
-          fetch('http://127.0.0.1:8000/api/doctors/'),
-          fetch('http://127.0.0.1:8000/api/appointments/'),
-          fetch('http://127.0.0.1:8000/api/patients/'),
-          fetch('http://127.0.0.1:8000/api/hospital_beds/')
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/hospitals/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/departments/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/doctors/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/appointments/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/patients/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/hospital_beds/')
         ]);
 
         if (!hRes.ok) throw new Error('Failed to fetch data');

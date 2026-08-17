@@ -13,9 +13,9 @@ const BloodBank = () => {
     const fetchData = async () => {
       try {
         const [bloodRes, hospRes, donorRes] = await Promise.all([
-          fetch('http://127.0.0.1:8000/api/blood/'),
-          fetch('http://127.0.0.1:8000/api/hospitals/'),
-          fetch('http://127.0.0.1:8000/api/donors/')
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/blood/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/hospitals/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/donors/')
         ]);
 
         if (!bloodRes.ok || !hospRes.ok || !donorRes.ok) {

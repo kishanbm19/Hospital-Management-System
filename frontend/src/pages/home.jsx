@@ -12,9 +12,9 @@ const Home = () => {
     const fetchStats = async () => {
       try {
         const [hRes, bRes, bedRes] = await Promise.all([
-          fetch('http://127.0.0.1:8000/api/hospitals/'),
-          fetch('http://127.0.0.1:8000/api/blood/'),
-          fetch('http://127.0.0.1:8000/api/hospital_beds/')
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/hospitals/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/blood/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/hospital_beds/')
         ]);
 
         if (!hRes.ok || !bRes.ok || !bedRes.ok) {

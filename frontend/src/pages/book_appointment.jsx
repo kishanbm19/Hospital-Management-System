@@ -25,9 +25,9 @@ const BookAppointment = () => {
     const fetchData = async () => {
       try {
         const [hRes, dRes, docRes] = await Promise.all([
-          fetch('http://127.0.0.1:8000/api/hospitals/'),
-          fetch('http://127.0.0.1:8000/api/departments/'),
-          fetch('http://127.0.0.1:8000/api/doctors/')
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/hospitals/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/departments/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/doctors/')
         ]);
 
         if (!hRes.ok || !dRes.ok || !docRes.ok) {
@@ -93,7 +93,7 @@ const BookAppointment = () => {
       const allocatedDoctor = matchingDoctors[0];
 
       // 2. Create Patient Record
-      const patientRes = await fetch('http://127.0.0.1:8000/api/patients/', {
+      const patientRes = await fetch('http://https://hospital-management-system-8qmy.vercel.app/api/patients/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -111,7 +111,7 @@ const BookAppointment = () => {
       const patientData = await patientRes.json();
 
       // 3. Create Appointment
-      const apptRes = await fetch('http://127.0.0.1:8000/api/appointments/', {
+      const apptRes = await fetch('http://https://hospital-management-system-8qmy.vercel.app/api/appointments/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

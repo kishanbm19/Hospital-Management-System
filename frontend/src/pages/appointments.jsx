@@ -12,9 +12,9 @@ const Appointments = () => {
     const fetchData = async () => {
       try {
         const [apptRes, docsRes, patRes] = await Promise.all([
-          fetch('http://127.0.0.1:8000/api/appointments/'),
-          fetch('http://127.0.0.1:8000/api/doctors/'),
-          fetch('http://127.0.0.1:8000/api/patients/')
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/appointments/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/doctors/'),
+          fetch('http://https://hospital-management-system-8qmy.vercel.app/api/patients/')
         ]);
 
         if (!apptRes.ok || !docsRes.ok || !patRes.ok) {
