@@ -95,6 +95,16 @@ const Hospitals = () => {
                     <p><strong>City:</strong> {hospital.city}</p>
                     <p><strong>State:</strong> {hospital.state}</p>
                     <p><strong>Phone:</strong> {hospital.phone || 'N/A'}</p>
+                    {(() => {
+                      const b = data.bedSummaries.find(bs => bs.hospital_id === hospital.hospital_id);
+                      return b ? (
+                        <div style={{marginTop: '0.8rem', display: 'flex', justifyContent: 'space-between', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '6px'}}>
+                          <div style={{textAlign: 'center'}}><div style={{fontSize: '0.8rem', color: 'var(--text-muted)'}}>Total</div><div style={{fontWeight: 'bold'}}>{b.total_beds}</div></div>
+                          <div style={{textAlign: 'center'}}><div style={{fontSize: '0.8rem', color: 'var(--text-muted)'}}>Available</div><div style={{fontWeight: 'bold', color: '#22c55e'}}>{b.available}</div></div>
+                          <div style={{textAlign: 'center'}}><div style={{fontSize: '0.8rem', color: 'var(--text-muted)'}}>Occupied</div><div style={{fontWeight: 'bold', color: '#ef4444'}}>{b.occupied}</div></div>
+                        </div>
+                      ) : null;
+                    })()}
                     <button className="attractive-btn blue-btn small" style={{marginTop: '1.5rem'}}>Open Dashboard</button>
                   </div>
                 </div>
@@ -131,6 +141,12 @@ const Hospitals = () => {
                 onClick={() => setActiveTab('patients')}
               >
                 Patients
+              </button>
+              <button 
+                className={`tab-btn ${activeTab === 'beds' ? 'active' : ''}`}
+                onClick={() => setActiveTab('beds')}
+              >
+                Bed Availability
               </button>
             </div>
           </div>
@@ -220,6 +236,56 @@ const Hospitals = () => {
                           </div>
                         );
                       })
+                    }
+                  </div>
+                );
+              }
+
+              if (activeTab === 'beds') {
+                const bedSummary = data.bedSummaries.find(b => b.hospital_id === selectedHospital.hospital_id);
+                return (
+                  <div className="grid-container">
+                    {!bedSummary ? <p className="no-data">No bed availability data found for this hospital.</p> : 
+                      <div className="data-card" style={{borderLeft: '4px solid #3b82f6'}}>
+                        <div className="card-header">
+                          <h3>Bed Status Summary</h3>
+                          <span className={`badge ${bedSummary.available > 0 ? 'success' : 'danger'}`}>
+                            {bedSummary.available > 0 ? 'Beds Available' : 'Full'}
+                          </span>
+                        </div>
+                        <div className="card-body">
+                          <p><strong>Total Beds:</strong> {bedSummary.total_beds}</p>
+                          <p><strong>Available Beds:</strong> <span style={{fontWeight: 600, color: '#22c55e'}}>{bedSummary.available}</span></p>
+                          <p><strong>Occupied Beds:</strong> {bedSummary.occupied}</p>
+                          <p><strong>Maintenance:</strong> {bedSummary.maintenance}</p>
+                          
+                          <div style={{marginTop: '1.5rem', width: '100%', height: '8px', background: '#334155', borderRadius: '4px', overflow: 'hidden'}}>
+                            <div style={{
+                              width: `${(bedSummary.occupied / bedSummary.total_beds) * 100}%`,
+                              height: '100%',
+                              background: '#ef4444',
+                              float: 'left'
+                            }} />
+                            <div style={{
+                              width: `${(bedSummary.maintenance / bedSummary.total_beds) * 100}%`,
+                              height: '100%',
+                              background: '#f59e0b',
+                              float: 'left'
+                            }} />
+                            <div style={{
+                              width: `${(bedSummary.available / bedSummary.total_beds) * 100}%`,
+                              height: '100%',
+                              background: '#22c55e',
+                              float: 'left'
+                            }} />
+                          </div>
+                          <div style={{display: 'flex', gap: '1rem', marginTop: '0.8rem', fontSize: '0.85rem', color: 'var(--text-muted)'}}>
+                            <span style={{display: 'flex', alignItems: 'center', gap: '4px'}}><span style={{width: 8, height: 8, borderRadius: '50%', background: '#ef4444'}}></span> Occupied</span>
+                            <span style={{display: 'flex', alignItems: 'center', gap: '4px'}}><span style={{width: 8, height: 8, borderRadius: '50%', background: '#f59e0b'}}></span> Maintenance</span>
+                            <span style={{display: 'flex', alignItems: 'center', gap: '4px'}}><span style={{width: 8, height: 8, borderRadius: '50%', background: '#22c55e'}}></span> Available</span>
+                          </div>
+                        </div>
+                      </div>
                     }
                   </div>
                 );

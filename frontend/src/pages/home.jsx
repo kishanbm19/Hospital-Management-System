@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './pages.css';
 
 const Home = () => {
-  const [stats, setStats] = useState({ hospitals: 0, bloodUnits: 0, bloodTypes: 0 });
+  const [stats, setStats] = useState({ hospitals: 0, bloodUnits: 0, bloodTypes: 0, totalBeds: 0, availableBeds: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -11,25 +11,32 @@ const Home = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [hRes, bRes] = await Promise.all([
+        const [hRes, bRes, bedRes] = await Promise.all([
           fetch('http://127.0.0.1:8000/api/hospitals/'),
-          fetch('http://127.0.0.1:8000/api/blood/')
+          fetch('http://127.0.0.1:8000/api/blood/'),
+          fetch('http://127.0.0.1:8000/api/hospital_beds/')
         ]);
 
-        if (!hRes.ok || !bRes.ok) {
+        if (!hRes.ok || !bRes.ok || !bedRes.ok) {
           throw new Error('Failed to fetch data');
         }
 
         const hospitals = await hRes.json();
         const blood = await bRes.json();
+        const beds = await bedRes.json();
 
         const totalUnits = blood.reduce((sum, item) => sum + item.units_available, 0);
         const uniqueTypes = new Set(blood.map(item => item.blood_type)).size;
 
+        const totalBeds = beds.reduce((sum, item) => sum + item.total_beds, 0);
+        const availableBeds = beds.reduce((sum, item) => sum + item.available, 0);
+
         setStats({
           hospitals: hospitals.length,
           bloodUnits: totalUnits,
-          bloodTypes: uniqueTypes
+          bloodTypes: uniqueTypes,
+          totalBeds,
+          availableBeds
         });
       } catch (err) {
         setError(err.message);
@@ -63,6 +70,14 @@ const Home = () => {
               <div className="box-metric">
                 <span className="b-value">{stats.hospitals}</span>
                 <span className="b-label">Hospitals</span>
+              </div>
+              <div className="box-metric">
+                <span className="b-value">{stats.totalBeds}</span>
+                <span className="b-label">Total Beds</span>
+              </div>
+              <div className="box-metric">
+                <span className="b-value" style={{color: '#22c55e'}}>{stats.availableBeds}</span>
+                <span className="b-label">Available Beds</span>
               </div>
             </div>
 
