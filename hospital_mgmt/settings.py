@@ -27,9 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "hospital-management-system-org3gswes-kishanbm19s-projects.vercel.app",
-    ".vercel.app",
-    "localhost",
-    "127.0.0.1",
+      ".vercel.app",
+      "localhost",
+      "127.0.0.1",
 ]
 
 # Application definition
